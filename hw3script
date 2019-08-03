@@ -1,0 +1,286 @@
+Script started on 2019-03-24 12:29:03-04:00
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ cat contactFactory.cpp
+//Zhecheng Li
+#include<contactFactory.h>
+#include<iostream>
+#include<stdlib.h>
+using namespace std;
+ContactFactory::ContactFactory(){
+}
+ContactFactory::~ContactFactory(){
+}
+QList<int> ContactFactory::categoryFactory = (QList<int>()<<1<<2<<3);
+QStringList ContactFactory::firstNameFactory = (QStringList()<<"Syeda"<<"Fern"<<"Gabriella"<<"Troy"<<"Ana"
+                                                <<"Amelia"<<"Khadija"<<"Victoria"<<"Rosa"<<"Lauren");
+QStringList ContactFactory::lastNameFactory = (QStringList()<<"Norris"<<"Johnson"<<"Hart"<<"Owens"<<"Love"<<"Hansen"
+                                               <<"Rees"<<"Cunningham"<<"Klein"<<"Schneider");
+QStringList ContactFactory::streetAddressFactory = (QStringList()<<"Street0"<<"Street1"<<"Street2"<<"Street3"<<"Street4"<<"Street5"
+                                                    <<"Street6"<<"Street7"<<"Street8"<<"Street9");
+QStringList ContactFactory::cityFactory = (QStringList()<<"Boston"<<"New York"<<"Houston"<<"Phoenix"<<"Dallas"<<"Austin"
+                                          <<"Jacksonville"<<"San Jose"<<"Chicago"<<"Los Angeles");
+QStringList ContactFactory::zipCodeFactory = (QStringList()<<"46523"<<"98563"<<"45216"<<"75486"<<"66531"<<"66314"
+                                              <<"53156"<<"98643"<<"98762"<<"64631");
+QStringList ContactFactory::phoneNumberFactory = (QStringList()<<"896-245"<<"198-563"<<"454-216"<<"754-186"<<"665-131"<<"661-314"
+                                                  <<"513-156"<<"986-943"<<"987-062"<<"646-031");
+ContactFactory::ContactFactory(int n){
+    int i=0;
+    while(i<n){
+        clist.add(randomContact());
+        i++;
+    }
+}
+Contacts ContactFactory::randomContact(){
+    Contacts c;
+    c.category = categoryFactory.at(rand()%(categoryFactory.size()));
+    c.lastName = lastNameFactory.at(rand()%(lastNameFactory.size()));
+    c.firstName = firstNameFactory.at(rand()%(firstNameFactory.size()));
+    c.streetAddress = streetAddressFactory.at(rand()%(streetAddressFactory.size()));
+    c.city = cityFactory.at(rand()%(cityFactory.size()));
+    c.zipCode = zipCodeFactory.at(rand()%(zipCodeFactory.size()));
+    c.phoneNumber = phoneNumberFactory.at(rand()%(phoneNumberFactory.size()));
+    return c;
+}
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ cat contactFact.h[K[K[Ktory.h
+#ifndef CONTACTFACTORY_H
+#define CONTACTFACTORY_H
+#include<QStringList>
+#include<contacts.h>
+#include<contactList.h>
+class ContactFactory{
+public:
+    ContactFactory();
+    ~ContactFactory();
+    ContactList clist;
+    static QList<int> categoryFactory;
+    static QStringList firstNameFactory;
+    static QStringList lastNameFactory;
+    static QStringList streetAddressFactory;
+    static QStringList cityFactory;
+    static QStringList zipCodeFactory;
+    static QStringList phoneNumberFactory;
+    ContactFactory(int n);
+    Contacts randomContact();
+};
+#endif // CONTACTFACTORY_H
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ cat contactLIst[K[K[Kist.cpp
+//Zhecheng Li
+#include<contacts.h>
+#include<contactList.h>
+
+ContactList::ContactList(){
+}
+ContactList::~ContactList(){
+}
+void ContactList::add(Contacts c){
+    list.append(c);
+}
+void ContactList::remove(Contacts c){
+    list.removeOne(c);
+}
+QStringList ContactList::getPhoneList(int n){
+    QStringList q1;
+    for (int i=0;i<list.size();i++){
+        if(list[i].getCategory()==n){
+            q1.append(list[i].firstName+" "+list[i].lastName+":"+list[i].getPhoneNumber()+"\t");
+        }
+    }
+    return q1;
+}
+
+QStringList ContactList::getMailingList(int n){
+    QStringList q1;
+    for (int i=0;i<list.size();i++){
+        if(list[i].getCategory()==n){
+            q1.append(list[i].firstName+" "+list[i].lastName+":"+list[i].getStreetAddress()+"\t");
+        }
+    }
+    return q1;
+}
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ cat contactList.h
+#ifndef CONTACTLIST_H
+#define CONTACTLIST_H
+#include<QStringList>
+#include<QList>
+#include<contacts.h>
+class ContactList: public Contacts{
+public:
+    ContactList();
+    ~ContactList();
+    void add(Contacts);
+    void remove(Contacts);
+    QStringList getPhoneList(int n);
+    QStringList getMailingList(int n);
+    QList<Contacts> list;
+};
+#endif // CONTACTLIST_H
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ cat contacts.cpp
+//Zhecheng Li
+#include<contacts.h>
+
+Contacts::Contacts(){
+}
+Contacts::~Contacts(){
+}
+Contacts::Contacts(int category, QString firstName, QString lastName,
+                   QString streetAddress, QString zipCode, QString city,QString phoneNumber):
+        category(category),firstName(firstName),lastName(lastName),streetAddress(streetAddress),
+        zipCode(zipCode),city(city),phoneNumber(phoneNumber){
+}
+
+int Contacts::getCategory(){
+    return category;
+}
+
+QString Contacts::getFirstName(){
+    return firstName;
+}
+QString Contacts::getLastName(){
+    return lastName;
+}
+QString Contacts::getStreetAddress(){
+    return streetAddress;
+}
+QString Contacts::getZipCode(){
+    return zipCode;
+}
+QString Contacts::getCity(){
+    return city;
+}
+QString Contacts::getPhoneNumber(){
+    return phoneNumber;
+}
+QString Contacts::toString()const{
+    return QString("Category:'%1', first name:'%2', last name:'%3', street address:'%4', zipcode:'%5', city:'%6', phoneNumber:'%7'\n")
+            .arg(category).arg(firstName).arg(lastName).arg(streetAddress).arg(zipCode).arg(city).arg(phoneNumber);
+}
+//important question
+Contacts &Contacts::operator=(const Contacts &c){
+    this->category = c.category;
+    this->firstName = c.firstName;
+    this->lastName = c.lastName;
+    this->phoneNumber = c.phoneNumber;
+    this->streetAddress = c.streetAddress;
+    this->zipCode = c.zipCode;
+    this->city = c.city;
+}
+bool const &Contacts::operator ==(const Contacts &c){
+    if((this->category==c.category)&&(this->firstName==c.firstName)&&(this->lastName==c.lastName)&&(this->phoneNumber==c.phoneNumber)&&(this->streetAddress==c.streetAddress)&&
+            (this->zipCode==c.zipCode)&&(this->city ==c.city))
+        return true;
+    else
+        return false;
+}
+
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ cat contacts.h
+#ifndef CONTACTS_H
+#define CONTACTS_H
+#include<QString>
+#include<QStringList>
+
+class Contacts{
+public:
+    Contacts();
+    ~Contacts();
+    Contacts(int category, QString firstName,
+             QString lastName, QString streetAddress, QString zipCode, QString city,QString phoneNumber);
+    int getCategory();
+    QString getFirstName();
+    QString getLastName();
+    QString getStreetAddress();
+    QString getZipCode();
+    QString getCity();
+    QString getPhoneNumber();
+    QString toString()const;
+    Contacts &operator=(const Contacts &c);
+    bool const &operator==(const Contacts &c);
+    int category;
+    QString firstName;
+    QString lastName;
+    QString streetAddress;
+    QString zipCode;
+    QString city;
+    QString phoneNumber;
+};
+#endif // CONTACTS_H
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ cat co[K[K[K[Kt run.cpp
+//Zhecheng Li
+#include<contactFactory.h>
+#include<contactList.h>
+#include<contacts.h>
+#include<QTextStream>
+#include<time.h>
+
+int main(){
+    srand(time(NULL));
+    QTextStream cout(stdout);
+    ContactFactory contacts(5);
+    cout<<"This is five random contacts:"<<endl;
+    for(int i=0;i<contacts.clist.list.size();i++){
+        cout<<(contacts.clist.list.at(i)).toString();
+    }
+    cout<<"This is category 1 phone list:"<<endl;
+    for(int i = 0;i<contacts.clist.getPhoneList(1).size();i++){
+        cout<<contacts.clist.getPhoneList(1).at(i);
+    }
+    cout<<"This is category 2 phone list:"<<endl;
+    for(int i = 0;i<contacts.clist.getPhoneList(2).size();i++){
+        cout<<contacts.clist.getPhoneList(2).at(i);
+    }
+    cout<<"This is category 3 phone list:"<<endl;
+    for(int i = 0;i<contacts.clist.getPhoneList(3).size();i++){
+        cout<<contacts.clist.getPhoneList(3).at(i);
+    }
+    cout<<"This is category 1 mail list:"<<endl;
+    for(int i = 0;i<contacts.clist.getMailingList(1).size();i++){
+        cout<<contacts.clist.getMailingList(1).at(i);
+    }
+    cout<<"This is category 2 mail list:"<<endl;
+    for(int i = 0;i<contacts.clist.getMailingList(2).size();i++){
+        cout<<contacts.clist.getMailingList(2).at(i);
+    }
+    cout<<"This is category 1 mail list:"<<endl;
+    for(int i = 0;i<contacts.clist.getMailingList(3).size();i++){
+        cout<<contacts.clist.getMailingList(3).at(i);
+    }
+
+}
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ qmake
+Info: creating stash file /home/psy/Contacts/.qmake.stash
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ Makefiu[Kle
+Makefile: command not found
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ make
+g++ -c -pipe -O2 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o contacts.o contacts.cpp
+[01m[Kcontacts.cpp:[m[K In member function ‘[01m[KContacts& Contacts::operator=(const Contacts&)[m[K’:
+[01m[Kcontacts.cpp:49:1:[m[K [01;35m[Kwarning: [m[Kno return statement in function returning non-void [[01;35m[K-Wreturn-type[m[K]
+ [01;35m[K}[m[K
+ [01;35m[K^[m[K
+[01m[Kcontacts.cpp:[m[K In member function ‘[01m[Kconst bool& Contacts::operator==(const Contacts&)[m[K’:
+[01m[Kcontacts.cpp:53:16:[m[K [01;35m[Kwarning: [m[Kreturning reference to temporary [[01;35m[K-Wreturn-local-addr[m[K]
+         return [01;35m[Ktrue[m[K;
+                [01;35m[K^~~~[m[K
+[01m[Kcontacts.cpp:55:16:[m[K [01;35m[Kwarning: [m[Kreturning reference to temporary [[01;35m[K-Wreturn-local-addr[m[K]
+         return [01;35m[Kfalse[m[K;
+                [01;35m[K^~~~~[m[K
+g++ -c -pipe -O2 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o contactFactory.o contactFactory.cpp
+g++ -c -pipe -O2 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o contactList.o contactList.cpp
+g++ -c -pipe -O2 -Wall -W -D_REENTRANT -fPIC -DQT_NO_DEBUG -DQT_GUI_LIB -DQT_CORE_LIB -I. -isystem /usr/include/x86_64-linux-gnu/qt5 -isystem /usr/include/x86_64-linux-gnu/qt5/QtGui -isystem /usr/include/x86_64-linux-gnu/qt5/QtCore -I. -isystem /usr/include/libdrm -I/usr/lib/x86_64-linux-gnu/qt5/mkspecs/linux-g++ -o run.o run.cpp
+g++ -Wl,-O1 -o Contacts contacts.o contactFactory.o contactList.o run.o   -lQt5Gui -lQt5Core -lGL -lpthread 
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ Makefile
+Makefile: command not found
+]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ ./con[K[K[KContacts
+This is five random contacts:
+Category:'3', first name:'Lauren', last name:'Rees', street address:'Street0', zipcode:'64631', city:'Los Angeles', phoneNumber:'513-156'
+Category:'3', first name:'Fern', last name:'Johnson', street address:'Street2', zipcode:'66314', city:'Austin', phoneNumber:'754-186'
+Category:'1', first name:'Victoria', last name:'Klein', street address:'Street1', zipcode:'98643', city:'Jacksonville', phoneNumber:'646-031'
+Category:'2', first name:'Rosa', last name:'Hansen', street address:'Street0', zipcode:'45216', city:'Houston', phoneNumber:'986-943'
+Category:'3', first name:'Troy', last name:'Rees', street address:'Street7', zipcode:'45216', city:'Dallas', phoneNumber:'987-062'
+This is category 1 phone list:
+Victoria Klein:646-031	This is category 2 phone list:
+Rosa Hansen:986-943	This is category 3 phone list:
+Lauren Rees:513-156	Fern Johnson:754-186	Troy Rees:987-062	This is category 1 mail list:
+Victoria Klein:Street1	This is category 2 mail list:
+Rosa Hansen:Street0	This is category 1 mail list:
+Lauren Rees:Street0	Fern Johnson:Street2	Troy Rees:Street7	]0;psy@psy: ~/Contacts[01;32mpsy@psy[00m:[01;34m~/Contacts[00m$ exit
+exit
+
+Script done on 2019-03-24 12:32:55-04:00
